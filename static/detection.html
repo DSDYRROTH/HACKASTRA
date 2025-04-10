@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Detection</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="api.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Real-Time Sign Language Detection</h1>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+            <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 9c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3m0-2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+            </svg>
+            <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none;">
+                <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+            </svg>
+        </button>
+    </header>
+    
+    <div class="detection-container">
+        <div class="video-container">
+            <video id="video" autoplay muted playsinline></video>
+            <div id="error-message" class="error-message"></div>
+            <div class="loading-overlay" id="loading-overlay">
+                <div class="spinner"></div>
+            </div>
+            <div id="live-detection" class="live-detection"></div>
+        </div>
+        
+        <div class="output-container">
+            <div class="text-composition-area">
+                <h2>Composed Text</h2>
+                <div id="text-display" class="text-display" contenteditable="true" spellcheck="false"></div>
+                <div class="text-controls">
+                    <button id="clear-text-btn" class="text-control-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                        Clear
+                    </button>
+                    <button id="copy-text-btn" class="text-control-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+            </div>
+            
+            <div class="output-box">
+                <h2>Detected Alphabets</h2>
+                <div id="detection-output"></div>
+                <div class="api-status" id="api-status">
+                    <span class="status-dot disconnected" id="status-dot"></span>
+                    <span id="status-text">API: Disconnected</span>
+                </div>
+                <div class="instructions-text">
+                    <p>Make sign language gestures for alphabets in view of the camera. Detected letters will appear here with their signs.</p>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="start-btn" class="button">Start Detection</button>
+                <button id="stop-btn" class="button stop" disabled>Stop Detection</button>
+            </div>
+            
+            <div class="api-key-section">
+                <input type="text" id="api-key-input" placeholder="Enter your API key" class="api-key-input">
+                <button id="connect-api-btn" class="button connect">Connect API</button>
+            </div>
+        </div>
+    </div>
+    
+    <a href="index.html" class="back-link">← Back to Home</a>
+    
+    <script>
+        // DOM elements
+        const video = document.getElementById('video');
+        const detectionOutput = document.getElementById('detection-output');
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const errorMessage = document.getElementById('error-message');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const connectApiBtn = document.getElementById('connect-api-btn');
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+        const textDisplay = document.getElementById('text-display');
+        const clearTextBtn = document.getElementById('clear-text-btn');
+        const copyTextBtn = document.getElementById('copy-text-btn');
+        const liveDetection = document.getElementById('live-detection');
+        
+        // Theme functionality
+        // Check for saved theme preference or use preferred color scheme
+        const savedTheme = localStorage.getItem('theme');
+        
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.body.classList.add('dark-mode');
+            sunIcon.style.display = 'none';
+            moonIcon.style.display = 'block';
+        }
+        
+        // Toggle theme function
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            // Update icons
+            if (document.body.classList.contains('dark-mode')) {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        
+        // Alphabet letters and special commands for reference
+        const alphabets = [
+            { letter: 'A', imagePath: 'images/signs/A.png' },
+            { letter: 'B', imagePath: 'images/signs/B.png' },
+            { letter: 'C', imagePath: 'images/signs/C.png' },
+            { letter: 'D', imagePath: 'images/signs/D.png' },
+            { letter: 'E', imagePath: 'images/signs/E.png' },
+            { letter: 'F', imagePath: 'images/signs/F.png' },
+            { letter: 'G', imagePath: 'images/signs/G.png' },
+            { letter: 'H', imagePath: 'images/signs/H.png' },
+            { letter: 'I', imagePath: 'images/signs/I.png' },
+            { letter: 'J', imagePath: 'images/signs/J.png' },
+            { letter: 'K', imagePath: 'images/signs/K.png' },
+            { letter: 'L', imagePath: 'images/signs/L.png' },
+            { letter: 'M', imagePath: 'images/signs/M.png' },
+            { letter: 'N', imagePath: 'images/signs/N.png' },
+            { letter: 'O', imagePath: 'images/signs/O.png' },
+            { letter: 'P', imagePath: 'images/signs/P.png' },
+            { letter: 'Q', imagePath: 'images/signs/Q.png' },
+            { letter: 'R', imagePath: 'images/signs/R.png' },
+            { letter: 'S', imagePath: 'images/signs/S.png' },
+            { letter: 'T', imagePath: 'images/signs/T.png' },
+            { letter: 'U', imagePath: 'images/signs/U.png' },
+            { letter: 'V', imagePath: 'images/signs/V.png' },
+            { letter: 'W', imagePath: 'images/signs/W.png' },
+            { letter: 'X', imagePath: 'images/signs/X.png' },
+            { letter: 'Y', imagePath: 'images/signs/Y.png' },
+            { letter: 'Z', imagePath: 'images/signs/Z.png' }
+        ];
+        
+        // Special commands
+        const specialCommands = [
+            { 
+                letter: 'SPACE', 
+                imagePath: 'images/signs/space.png',
+                class: 'space',
+                icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 9v4H6V9H4v6h16V9z"/></svg>'
+            },
+            { 
+                letter: 'DELETE', 
+                imagePath: 'images/signs/delete.png',
+                class: 'delete',
+                icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7.07L2.4 12l4.66-7H22v14zm-11.59-2L14 13.41 17.59 17 19 15.59 15.41 12 19 8.41 17.59 7 14 10.59 10.41 7 9 8.41 12.59 12 9 15.59z"/></svg>'
+            }
+        ];
+        
+        // All possible signs
+        const allPossibleSigns = [...alphabets, ...specialCommands];
+        
+        // Create a lookup map for quick access to sign data
+        const signDataMap = {};
+        allPossibleSigns.forEach(sign => {
+            signDataMap[sign.letter] = sign;
+        });
+        
+        let stream;
+        let useApiDetection = false;
+        
+        // Text composition functionality
+        textDisplay.addEventListener('focus', () => {
+            // When text area gets focus, show a blinking cursor
+            if (!textDisplay.innerHTML) {
+                textDisplay.innerHTML = '<span class="cursor-blink"></span>';
+            }
+        });
+        
+        textDisplay.addEventListener('blur', () => {
+            // Remove empty cursor when losing focus
+            if (textDisplay.innerHTML === '<span class="cursor-blink"></span>') {
+                textDisplay.innerHTML = '';
+            }
+        });
+        
+        clearTextBtn.addEventListener('click', () => {
+            textDisplay.innerHTML = '';
+            textDisplay.classList.add('clear-animation');
+            
+            // Remove the animation class after it completes
+            setTimeout(() => {
+                textDisplay.classList.remove('clear-animation');
+            }, 500);
+        });
+        
+        copyTextBtn.addEventListener('click', () => {
+            // Get text without HTML elements
+            const textToCopy = textDisplay.innerText || textDisplay.textContent;
+            
+            // Use the clipboard API to copy text
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Show copied feedback
+                const originalText = copyTextBtn.innerHTML;
+                copyTextBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied!';
+                copyTextBtn.classList.add('copied');
+                
+                // Restore original text after 2 seconds
+                setTimeout(() => {
+                    copyTextBtn.innerHTML = originalText;
+                    copyTextBtn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                showError('Failed to copy text to clipboard');
+            });
+        });
+        
+        // Add text to the composition based on detected sign
+        function addToTextComposition(sign) {
+            if (!textDisplay.innerHTML) {
+                textDisplay.innerHTML = '';
+            }
+            
+            // Handle special commands
+            if (sign === 'SPACE') {
+                textDisplay.innerHTML += ' ';
+            } else if (sign === 'DELETE') {
+                // Remove the last character
+                const currentText = textDisplay.innerHTML;
+                textDisplay.innerHTML = currentText.substring(0, currentText.length - 1);
+            } else {
+                // Add the letter with a typing animation
+                const letterSpan = document.createElement('span');
+                letterSpan.textContent = sign;
+                letterSpan.classList.add('typed-letter');
+                textDisplay.appendChild(letterSpan);
+                
+                // Scroll to the end if necessary
+                textDisplay.scrollLeft = textDisplay.scrollWidth;
+            }
+        }
+        
+        // Show live detection feedback
+        function showLiveDetection(sign, confidence = null) {
+            const signData = signDataMap[sign.toUpperCase()];
+            
+            if (!signData) return;
+            
+            // Create live detection element
+            liveDetection.innerHTML = '';
+            liveDetection.style.display = 'flex';
+            
+            const container = document.createElement('div');
+            container.className = 'live-detection-content';
+            
+            // Add image
+            const img = document.createElement('img');
+            img.src = signData.imagePath;
+            img.alt = `Sign for ${sign}`;
+            container.appendChild(img);
+            
+            // Add text
+            const textElement = document.createElement('div');
+            textElement.className = 'live-detection-text';
+            
+            if (signData.class) {
+                // Special command
+                textElement.innerHTML = `${signData.icon} ${signData.letter}`;
+            } else {
+                textElement.textContent = signData.letter;
+            }
+            container.appendChild(textElement);
+            
+            // Add confidence meter if available
+            if (confidence !== null) {
+                const confidenceContainer = document.createElement('div');
+                confidenceContainer.className = 'confidence-container';
+                
+                const confidenceBar = document.createElement('div');
+                confidenceBar.className = 'confidence-bar';
+                
+                const confidenceFill = document.createElement('div');
+                confidenceFill.className = 'confidence-fill';
+                confidenceFill.style.width = `${confidence * 100}%`;
+                
+                // Determine color based on confidence
+                if (confidence > 0.8) {
+                    confidenceFill.style.backgroundColor = 'var(--space-color)';
+                } else if (confidence > 0.6) {
+                    confidenceFill.style.backgroundColor = '#f39c12';
+                } else {
+                    confidenceFill.style.backgroundColor = 'var(--delete-color)';
+                }
+                
+                const confidenceText = document.createElement('span');
+                confidenceText.textContent = `${Math.round(confidence * 100)}%`;
+                
+                confidenceBar.appendChild(confidenceFill);
+                confidenceContainer.appendChild(confidenceBar);
+                confidenceContainer.appendChild(confidenceText);
+                container.appendChild(confidenceContainer);
+            }
+            
+            liveDetection.appendChild(container);
+            
+            // Animate appearance
+            liveDetection.classList.add('appear');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                liveDetection.classList.remove('appear');
+                setTimeout(() => {
+                    liveDetection.style.display = 'none';
+                }, 300);
+            }, 2000);
+        }
+        
+        // API connection handling
+        connectApiBtn.addEventListener('click', async () => {
+            const apiKey = apiKeyInput.value.trim();
+            
+            if (!apiKey) {
+                showError('Please enter an API key');
+                return;
+            }
+            
+            loadingOverlay.style.display = 'flex';
+            
+            try {
+                const connected = await signLanguageAPI.initialize(apiKey);
+                
+                if (connected) {
+                    updateApiStatus(true);
+                    useApiDetection = true;
+                    apiKeyInput.disabled = true;
+                    connectApiBtn.disabled = true;
+                    localStorage.setItem('signLanguageApiKey', apiKey);
+                } else {
+                    updateApiStatus(false);
+                    showError('Failed to connect to API service');
+                }
+            } catch (error) {
+                console.error('API connection error:', error);
+                showError('API connection error: ' + error.message);
+                updateApiStatus(false);
+            } finally {
+                loadingOverlay.style.display = 'none';
+            }
+        });
+        
+        // Check for saved API key
+        const savedApiKey = localStorage.getItem('signLanguageApiKey');
+        if (savedApiKey) {
+            apiKeyInput.value = savedApiKey;
+        }
+        
+        // Update API status indicator
+        function updateApiStatus(connected) {
+            statusDot.className = connected ? 'status-dot connected' : 'status-dot disconnected';
+            statusText.textContent = connected ? 'API: Connected' : 'API: Disconnected';
+        }
+        
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Start the webcam and detection
+        startBtn.addEventListener('click', async () => {
+            try {
+                errorMessage.style.display = 'none';
+                loadingOverlay.style.display = 'flex';
+                
+                // Request webcam access
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user' } 
+                });
+                
+                video.srcObject = stream;
+                
+                // Wait for video to be ready
+                video.onloadedmetadata = async () => {
+                    // Enable/disable appropriate buttons
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                    
+                    // Start detection
+                    if (useApiDetection) {
+                        // Use real API for detection
+                        try {
+                            await signLanguageAPI.startSession();
+                            
+                            // Process video frames
+                            signLanguageAPI.startContinuousDetection(video, handleDetectionResult, 300);
+                            
+                            loadingOverlay.style.display = 'none';
+                        } catch (error) {
+                            console.error('Detection start error:', error);
+                            showError('Failed to start detection: ' + error.message);
+                            loadingOverlay.style.display = 'none';
+                            stopDetection();
+                        }
+                    } else {
+                        // Use simulated detection if API is not connected
+                        loadingOverlay.style.display = 'none';
+                        startSimulatedDetection();
+                    }
+                };
+                
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                errorMessage.textContent = 'Unable to access camera. Please ensure you have a webcam connected and have granted permission.';
+                errorMessage.style.display = 'block';
+                loadingOverlay.style.display = 'none';
+            }
+        });
+        
+        // Handle detection result from API
+        function handleDetectionResult(result) {
+            if (result.error) {
+                console.error('Detection error:', result.error);
+                return;
+            }
+            
+            // Add each detected sign to the output
+            if (result.detected && result.detected.length > 0) {
+                result.detected.forEach(detectedSign => {
+                    // Get the letter and confidence
+                    const { sign, confidence } = detectedSign;
+                    
+                    // Show live detection with confidence
+                    showLiveDetection(sign, confidence);
+                    
+                    // Add to text composition
+                    addToTextComposition(sign);
+                    
+                    // Create detection item element
+                    addDetectedSignToOutput(sign, confidence);
+                });
+            }
+        }
+        
+        // Add detected sign to output
+        function addDetectedSignToOutput(sign, confidence = null) {
+            // Get sign data (could be a letter or special command)
+            const signData = signDataMap[sign.toUpperCase()];
+            
+            if (!signData) {
+                console.warn(`Unknown sign: ${sign}`);
+                return;
+            }
+            
+            // Create detection item
+            const detectionItem = document.createElement('div');
+            detectionItem.className = 'detection-item';
+            
+            // Create appropriate content based on whether it's a letter or special command
+            if (signData.class) {
+                // Special command (space or delete)
+                const specialButtonContainer = document.createElement('div');
+                specialButtonContainer.className = `control-button ${signData.class}`;
+                specialButtonContainer.style.margin = '0 auto';
+                specialButtonContainer.innerHTML = `${signData.icon} ${signData.letter}`;
+                
+                // Add click action for interactive feedback
+                specialButtonContainer.addEventListener('click', () => {
+                    addToTextComposition(signData.letter);
+                    specialButtonContainer.classList.add('active');
+                    setTimeout(() => {
+                        specialButtonContainer.classList.remove('active');
+                    }, 300);
+                });
+                
+                // Add special button to detection item
+                detectionItem.appendChild(specialButtonContainer);
+            } else {
+                // Regular letter
+                const letterContainer = document.createElement('div');
+                letterContainer.className = 'letter-container';
+                
+                // Create and add text
+                const textSpan = document.createElement('span');
+                textSpan.className = 'detection-text';
+                textSpan.textContent = signData.letter;
+                letterContainer.appendChild(textSpan);
+                
+                // Create and add image
+                const img = document.createElement('img');
+                img.src = signData.imagePath;
+                img.alt = `Sign for letter ${signData.letter}`;
+                img.className = 'letter-sign';
+                letterContainer.appendChild(img);
+                
+                // Add click action for interactive feedback
+                letterContainer.addEventListener('click', () => {
+                    addToTextComposition(signData.letter);
+                    letterContainer.classList.add('active');
+                    setTimeout(() => {
+                        letterContainer.classList.remove('active');
+                    }, 300);
+                });
+                
+                // Add letter container to detection item
+                detectionItem.appendChild(letterContainer);
+            }
+            
+            // Add confidence indicator if available
+            if (confidence !== null) {
+                const confidenceIndicator = document.createElement('div');
+                confidenceIndicator.className = 'confidence-indicator';
+                
+                // Calculate color based on confidence level
+                let confidenceColor;
+                if (confidence > 0.8) {
+                    confidenceColor = 'var(--space-color)';
+                } else if (confidence > 0.6) {
+                    confidenceColor = '#f39c12';
+                } else {
+                    confidenceColor = 'var(--delete-color)';
+                }
+                
+                confidenceIndicator.innerHTML = `
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: ${confidence * 100}%; background-color: ${confidenceColor}"></div>
+                    </div>
+                    <span class="confidence-text">${Math.round(confidence * 100)}%</span>
+                `;
+                
+                detectionItem.appendChild(confidenceIndicator);
+            }
+            
+            // Add item to output
+            detectionOutput.prepend(detectionItem);
+            
+            // Add a subtle animation to the new item
+            setTimeout(() => {
+                detectionItem.classList.add('active');
+            }, 10);
+            
+            // Limit the number of displayed items to keep the UI clean
+            if (detectionOutput.children.length > 10) {
+                detectionOutput.removeChild(detectionOutput.lastChild);
+            }
+        }
+        
+        // Simulated detection function (fallback when API is not used)
+        let simulationInterval;
+        function startSimulatedDetection() {
+            // This interval simulates AI model detection by showing random signs every 2 seconds
+            simulationInterval = setInterval(() => {
+                // In a real implementation, this would be replaced with actual AI model inference
+                const randomSign = allPossibleSigns[Math.floor(Math.random() * allPossibleSigns.length)];
+                const randomConfidence = Math.random() * 0.4 + 0.6; // Random confidence between 0.6 and 1.0
+                
+                // Show live detection feedback
+                showLiveDetection(randomSign.letter, randomConfidence);
+                
+                // Add to text composition
+                addToTextComposition(randomSign.letter);
+                
+                // Add to detection output
+                addDetectedSignToOutput(randomSign.letter, randomConfidence);
+            }, 2000);
+        }
+        
+        // Stop detection and webcam
+        stopBtn.addEventListener('click', () => {
+            stopDetection();
+            
+            // Clear the output
+            detectionOutput.innerHTML = '';
+        });
+        
+        // Stop all detection
+        function stopDetection() {
+            // Stop API detection if active
+            if (useApiDetection) {
+                signLanguageAPI.stopContinuousDetection();
+                signLanguageAPI.endSession().catch(error => {
+                    console.error('Error ending session:', error);
+                });
+            } else if (simulationInterval) {
+                // Stop simulation if active
+                clearInterval(simulationInterval);
+                simulationInterval = null;
+            }
+            
+            // Stop the webcam
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            
+            video.srcObject = null;
+            
+            // Enable/disable appropriate buttons
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+        
+        // Update API status on page load
+        updateApiStatus(false);
+    </script>
+</body>
+</html> 

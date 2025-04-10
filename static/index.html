@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Alphabet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Sign Language Alphabet</h1>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+            <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 9c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3m0-2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+            </svg>
+            <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none;">
+                <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+            </svg>
+        </button>
+    </header>
+    
+    <div class="index-container">
+        <div class="description">
+            <h2>About Sign Language Detection</h2>
+            <p>This application allows you to practice and detect sign language gestures using your webcam. It uses computer vision to recognize hand gestures representing the American Sign Language (ASL) alphabet.</p>
+            <p>Hover over any letter below to see the corresponding gesture. Click on letters to build a message in the practice area.</p>
+        </div>
+        <a href="detection.html" class="cta-button pulse-animation">
+            Start Detection
+            <span class="button-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+            </span>
+        </a>
+        
+        <h2 class="alphabet-header">Sign Language Alphabet</h2>
+        <p class="alphabet-instructions">Click on letters to add them to the practice area or hover to see their signs.</p>
+        
+        <div class="alphabet-grid" id="alphabet-grid">
+            <div class="alphabet-letter" data-letter="A">
+                A
+                <div class="preview-image">
+                    <img src="images/signs/A.png" alt="Sign for letter A">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="B">
+                B
+                <div class="preview-image">
+                    <img src="images/signs/B.png" alt="Sign for letter B">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="C">
+                C
+                <div class="preview-image">
+                    <img src="images/signs/C.png" alt="Sign for letter C">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="D">
+                D
+                <div class="preview-image">
+                    <img src="images/signs/D.png" alt="Sign for letter D">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="E">
+                E
+                <div class="preview-image">
+                    <img src="images/signs/E.png" alt="Sign for letter E">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="F">
+                F
+                <div class="preview-image">
+                    <img src="images/signs/F.png" alt="Sign for letter F">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="G">
+                G
+                <div class="preview-image">
+                    <img src="images/signs/G.png" alt="Sign for letter G">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="H">
+                H
+                <div class="preview-image">
+                    <img src="images/signs/H.png" alt="Sign for letter H">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="I">
+                I
+                <div class="preview-image">
+                    <img src="images/signs/I.png" alt="Sign for letter I">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="J">
+                J
+                <div class="preview-image">
+                    <img src="images/signs/J.png" alt="Sign for letter J">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="K">
+                K
+                <div class="preview-image">
+                    <img src="images/signs/K.png" alt="Sign for letter K">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="L">
+                L
+                <div class="preview-image">
+                    <img src="images/signs/L.png" alt="Sign for letter L">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="M">
+                M
+                <div class="preview-image">
+                    <img src="images/signs/M.png" alt="Sign for letter M">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="N">
+                N
+                <div class="preview-image">
+                    <img src="images/signs/N.png" alt="Sign for letter N">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="O">
+                O
+                <div class="preview-image">
+                    <img src="images/signs/O.png" alt="Sign for letter O">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="P">
+                P
+                <div class="preview-image">
+                    <img src="images/signs/P.png" alt="Sign for letter P">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="Q">
+                Q
+                <div class="preview-image">
+                    <img src="images/signs/Q.png" alt="Sign for letter Q">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="R">
+                R
+                <div class="preview-image">
+                    <img src="images/signs/R.png" alt="Sign for letter R">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="S">
+                S
+                <div class="preview-image">
+                    <img src="images/signs/S.png" alt="Sign for letter S">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="T">
+                T
+                <div class="preview-image">
+                    <img src="images/signs/T.png" alt="Sign for letter T">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="U">
+                U
+                <div class="preview-image">
+                    <img src="images/signs/U.png" alt="Sign for letter U">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="V">
+                V
+                <div class="preview-image">
+                    <img src="images/signs/V.png" alt="Sign for letter V">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="W">
+                W
+                <div class="preview-image">
+                    <img src="images/signs/W.png" alt="Sign for letter W">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="X">
+                X
+                <div class="preview-image">
+                    <img src="images/signs/X.png" alt="Sign for letter X">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="Y">
+                Y
+                <div class="preview-image">
+                    <img src="images/signs/Y.png" alt="Sign for letter Y">
+                </div>
+            </div>
+            <div class="alphabet-letter" data-letter="Z">
+                Z
+                <div class="preview-image">
+                    <img src="images/signs/Z.png" alt="Sign for letter Z">
+                </div>
+            </div>
+        </div>
+        
+        <div class="control-buttons">
+            <div class="control-button space" data-letter="SPACE">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M18 9v4H6V9H4v6h16V9z"/>
+                </svg>
+                SPACE
+                <div class="preview-image">
+                    <img src="images/signs/space.png" alt="Sign for space">
+                </div>
+            </div>
+            <div class="control-button delete" data-letter="DELETE">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7.07L2.4 12l4.66-7H22v14zm-11.59-2L14 13.41 17.59 17 19 15.59 15.41 12 19 8.41 17.59 7 14 10.59 10.41 7 9 8.41 12.59 12 9 15.59z"/>
+                </svg>
+                DELETE
+                <div class="preview-image">
+                    <img src="images/signs/delete.png" alt="Sign for delete">
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>How It Works</h2>
+            <ol>
+                <li>Click "Start Detection" to begin.</li>
+                <li>Position your hand in view of your webcam.</li>
+                <li>Make sign language gestures for alphabets A-Z.</li>
+                <li>The application will detect and display the corresponding letter with its sign.</li>
+                <li>Use the practice area above to try building words by clicking on letters.</li>
+                <li>Hover over any letter to see how to sign it.</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        
+        // Check for saved theme preference or use preferred color scheme
+        const savedTheme = localStorage.getItem('theme');
+        
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.body.classList.add('dark-mode');
+            sunIcon.style.display = 'none';
+            moonIcon.style.display = 'block';
+        }
+        
+        // Toggle theme function
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            // Update icons
+            if (document.body.classList.contains('dark-mode')) {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        
+        // Practice area functionality
+        const practiceDisplay = document.getElementById('practice-display');
+        const practiceClearBtn = document.getElementById('practice-clear-btn');
+        const practiceCopyBtn = document.getElementById('practice-copy-btn');
+        const alphabetGrid = document.getElementById('alphabet-grid');
+        const controlButtons = document.querySelectorAll('.control-button');
+        
+        // Focus handling for practice area
+        practiceDisplay.addEventListener('focus', () => {
+            // When text area gets focus, show a blinking cursor
+            if (!practiceDisplay.innerHTML) {
+                practiceDisplay.innerHTML = '<span class="cursor-blink"></span>';
+            }
+        });
+        
+        practiceDisplay.addEventListener('blur', () => {
+            // Remove empty cursor when losing focus
+            if (practiceDisplay.innerHTML === '<span class="cursor-blink"></span>') {
+                practiceDisplay.innerHTML = '';
+            }
+        });
+        
+        // Clear button functionality
+        practiceClearBtn.addEventListener('click', () => {
+            practiceDisplay.innerHTML = '';
+            practiceDisplay.classList.add('clear-animation');
+            
+            // Remove the animation class after it completes
+            setTimeout(() => {
+                practiceDisplay.classList.remove('clear-animation');
+            }, 500);
+        });
+        
+        // Copy button functionality
+        practiceCopyBtn.addEventListener('click', () => {
+            // Get text without HTML elements
+            const textToCopy = practiceDisplay.innerText || practiceDisplay.textContent;
+            
+            // Use the clipboard API to copy text
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Show copied feedback
+                const originalText = practiceCopyBtn.innerHTML;
+                practiceCopyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied!';
+                practiceCopyBtn.classList.add('copied');
+                
+                // Restore original text after 2 seconds
+                setTimeout(() => {
+                    practiceCopyBtn.innerHTML = originalText;
+                    practiceCopyBtn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                alert('Failed to copy text to clipboard');
+            });
+        });
+        
+        // Make alphabet letters clickable
+        document.querySelectorAll('.alphabet-letter').forEach(letter => {
+            letter.addEventListener('click', () => {
+                const letterValue = letter.getAttribute('data-letter');
+                addLetterToPractice(letterValue);
+                
+                // Add pressed effect
+                letter.classList.add('pressed');
+                setTimeout(() => {
+                    letter.classList.remove('pressed');
+                }, 300);
+            });
+        });
+        
+        // Make control buttons clickable
+        controlButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const action = button.getAttribute('data-letter');
+                
+                if (action === 'SPACE') {
+                    addSpaceToPractice();
+                } else if (action === 'DELETE') {
+                    deleteFromPractice();
+                }
+                
+                // Add pressed effect
+                button.classList.add('pressed');
+                setTimeout(() => {
+                    button.classList.remove('pressed');
+                }, 300);
+            });
+        });
+        
+        // Function to add letter to practice area
+        function addLetterToPractice(letter) {
+            if (!practiceDisplay.innerHTML || practiceDisplay.innerHTML === '<span class="cursor-blink"></span>') {
+                practiceDisplay.innerHTML = '';
+            }
+            
+            // Create the letter span with animation
+            const letterSpan = document.createElement('span');
+            letterSpan.textContent = letter;
+            letterSpan.classList.add('typed-letter');
+            practiceDisplay.appendChild(letterSpan);
+            
+            // Scroll to the end if necessary
+            practiceDisplay.scrollLeft = practiceDisplay.scrollWidth;
+        }
+        
+        // Function to add space to practice area
+        function addSpaceToPractice() {
+            if (!practiceDisplay.innerHTML || practiceDisplay.innerHTML === '<span class="cursor-blink"></span>') {
+                practiceDisplay.innerHTML = '';
+            }
+            
+            practiceDisplay.innerHTML += ' ';
+            
+            // Scroll to the end if necessary
+            practiceDisplay.scrollLeft = practiceDisplay.scrollWidth;
+        }
+        
+        // Function to delete last character from practice area
+        function deleteFromPractice() {
+            const currentText = practiceDisplay.innerHTML;
+            
+            if (currentText && currentText !== '<span class="cursor-blink"></span>') {
+                // Remove the last character or element
+                practiceDisplay.innerHTML = currentText.substring(0, currentText.length - 1);
+            }
+        }
+        
+        // Keyboard input for practice area when focused
+        practiceDisplay.addEventListener('keydown', (event) => {
+            // Prevent default behavior to handle it ourselves
+            event.preventDefault();
+            
+            const key = event.key.toUpperCase();
+            
+            // Handle alphabets
+            if (/^[A-Z]$/.test(key)) {
+                addLetterToPractice(key);
+                
+                // Highlight the corresponding letter in the grid
+                const letterElement = document.querySelector(`.alphabet-letter[data-letter="${key}"]`);
+                if (letterElement) {
+                    letterElement.classList.add('pressed');
+                    setTimeout(() => {
+                        letterElement.classList.remove('pressed');
+                    }, 300);
+                }
+            } 
+            // Handle space
+            else if (event.key === ' ') {
+                addSpaceToPractice();
+                
+                // Highlight the space button
+                const spaceButton = document.querySelector('.control-button.space');
+                spaceButton.classList.add('pressed');
+                setTimeout(() => {
+                    spaceButton.classList.remove('pressed');
+                }, 300);
+            } 
+            // Handle backspace
+            else if (event.key === 'Backspace') {
+                deleteFromPractice();
+                
+                // Highlight the delete button
+                const deleteButton = document.querySelector('.control-button.delete');
+                deleteButton.classList.add('pressed');
+                setTimeout(() => {
+                    deleteButton.classList.remove('pressed');
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html> 
